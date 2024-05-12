@@ -55,3 +55,4 @@ spec:
   volumes:
     - name: conf
       configMap:
+        name: ng-cm
