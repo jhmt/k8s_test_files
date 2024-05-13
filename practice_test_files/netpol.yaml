@@ -35,43 +35,9 @@ metadata:
   namespace: network
   name: web
 spec:
-  initContainers:
-  - name: init-con
-    image: busybox
-    command: ['sh', '-c', 'echo "Welcome to web!" > /tmp/content/index.html']
-    volumeMounts:
-    - name: content
-      mountPath: /tmp/content
-  volumes:
-  - name: content
   containers:
   - image: nginx:alpine
     name: web
-    volumeMounts:
-    - name: content
-      mountPath: /usr/share/nginx/html
----
-apiVersion: v1
-kind: Pod
-metadata:
-  namespace: network
-  name: frontend
-spec:
-  initContainers:
-  - name: init-con
-    image: busybox
-    command: ['sh', '-c', 'echo "Welcome to frontend!" > /tmp/content/index.html']
-    volumeMounts:
-    - name: content
-      mountPath: /tmp/content
-  volumes:
-  - name: content
-  containers:
-  - image: nginx:alpine
-    name: frontend
-    volumeMounts:
-    - name: content
-      mountPath: /usr/share/nginx/html
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -89,38 +55,6 @@ spec:
     - podSelector:
         matchLabels:
           role: web
-    ports:
-    - protocol: TCP
-      port: 80
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: web-network-policy
-  namespace: network
-spec:
-  podSelector:
-    matchLabels:
-      role: web
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 80
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          role: api
-    - podSelector:
-        matchLabels:
-          role: frontend
     ports:
     - protocol: TCP
       port: 80
