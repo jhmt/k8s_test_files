@@ -39,16 +39,6 @@ spec:
     - name: content
       mountPath: /usr/share/nginx/html
 ---
-apiVersion: v1
-kind: Pod
-metadata:
-  namespace: network
-  name: access-test
-spec:
-  containers:
-  - image: nginx:alpine
-    name: access-test
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
