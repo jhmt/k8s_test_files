@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: server
+spec: {}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: webapp
+  name: webapp
+  namespace: server
+spec:
+  containers:
+  - image: bitnami/express
+    env:
+      - name: PORT
+        value: "3030"
+    name: webapp
+    resources: {}
+    command: ["sh", "-c", "express app && cd app; npm i && npm start"]
+    ports:
+    - containerPort: 3030
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    run: webapp
+  name: websvc
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: webapp
+  type: NodePort
+status:
+  loadBalancer: {}
+---
